@@ -7,7 +7,6 @@ import json
 import requests
 import urllib
 
-
 reg = re.compile(r'<h4( class="status-title")?>(.*)</h4>(.*)</script>(.*)<!-- pdf--></div>')
 imgreg = re.compile('<img class="ke_img" src="(.*?)"')
 imgnamereg = re.compile('/([^.]*?\.(jpg|png))')
@@ -24,15 +23,14 @@ Headers = {
 		'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36'
 		}
 
-Temp = '''
-	<html>
-	<head>
+Temp = '''<html>
+    <head>
     <meta name="generator"
     content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>{0}</title>
-    <link href="../static/styles/reset.css" rel="stylesheet" type="text/css" />
-    <link href="../static/styles/index/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../static/styles/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../../static/styles/index/style.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
 	
@@ -41,7 +39,7 @@ Temp = '''
                     <tbody>
                         <tr>
                             <td style=width: auto; text-align: center;"><a href="http://xueqiu.com">
-								<img src="../static/images/favicon.png" alt="xueqiu"></a></td>
+								<img src="../../static/images/favicon.png" alt="xueqiu"></a></td>
                             <td style=width: auto; text-align: center;"><h1>{0}</h1>
 								<p><a href="{1}">{2}</a>&nbsp;&nbsp;{3}</p></td>
                         </tr>
@@ -71,14 +69,18 @@ def saveBlog(blogs):
 	for blogitem in blogs:
 		target = blogitem['target']
 		foldername = target.split('/')[-1]
-		title = blogitem['title'] 
+		title = blogitem['title']
+		
 		if title=='':
 			title = blogitem['description'][0:16]
 		author = blogitem['author']
+		authorfolder = os.path.join(basedir,author)
+		if not os.path.exists(authorfolder):			
+			os.mkdir(authorfolder)
 		userlink = 'http://xueqiu.com/%s'% blogitem['user_id']
 		createdtime = blogitem['created']
 		url = 'http://xueqiu.com/%s'%target		
-		blogFolder = os.path.join(basedir, foldername)		
+		blogFolder = os.path.join(authorfolder, foldername)		
 		if not os.path.exists(blogFolder):
 			os.mkdir(blogFolder)
 			r = requests.get(url, headers = Headers)	
@@ -86,7 +88,7 @@ def saveBlog(blogs):
 			article = re.search(reg, raw).group(4)
 			imglist = re.findall(imgreg, article)
 			articlepath = os.path.join(blogFolder, title+'.html')
-			print title
+			
 			for idx, imgurl in enumerate(imglist):
 				try:
 					imgname = re.search(imgnamereg, imgurl).group(1)
