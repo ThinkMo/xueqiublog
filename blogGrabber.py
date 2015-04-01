@@ -50,7 +50,7 @@ Temp = '''<html>
 				<hr noshade="noshade" />
 				<div class="main box">	  
 				{4}</div>
-				{5}
+				<a href="{6}">{5}</a>
 				<hr />
 				<div id="quotes" class="clearfix" style="text-align: center;">
 					<p>Copyright &copy 1996-2014 SINA Corporation All Rights Reserved.</p>											
@@ -103,7 +103,7 @@ def saveBlog(blogs):
 				except Exception as e:
 					print e
 
-			html = Temp.format(title.encode('utf-8'), userlink,author.encode('utf-8'),createdtime,article.encode('utf-8'),lastedit.encode('utf-8'))
+			html = Temp.format(title.encode('utf-8'), userlink,author.encode('utf-8'),createdtime,article.encode('utf-8'),lastedit.encode('utf-8'), url)
 			fileobj = open(blogpath,'w')
 			fileobj.write(html)
 			fileobj.close()
